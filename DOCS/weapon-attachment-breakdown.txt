@@ -1,0 +1,261 @@
+A '''Weapon''' is a gun that fires projectile- or energy-based ammunition. [[Raiders]] use Weapons to attack and defend against [[ARC]] and one another.
+
+Each Weapon belongs to a class that broadly describes its characteristics, such as the Assault Rifle, which rewards controlled bursts, or the Shotgun, which excels at close range. Raiders can permanently improve a Weapon through upgrades, or enhance it with swappable mods.
+
+With few exceptions, the [[Ammo]] type determines how easily a Weapon penetrates ARC armor, ranging from very weak to very strong.
+
+== Upgrades ==
+After constructing a [[Gunsmith]], Raiders can use materials found Topside or purchased from [[Traders]] to permanently improve the characteristics of most Weapons up to three times. The numerals I, II, III, and IV in a Weapon's name indicate how many times it has been upgraded. The specific improvements granted vary by Weapon.
+
+Upgrading also restores a Weapon's appearance, gradually replacing rust and faded paint with a cleaner finish until it looks new.
+
+Weapons with the [[:Category:Legendary Weapons|Legendary rarity]] cannot be upgraded.
+
+== Mods ==
+{{main|Weapon Mods}}
+Weapon mods, also known as modifications or attachments, are items used to adjust the properties of a weapon. Each weapon has a limited number of special slots that can accept mods. Unlike upgrades, weapon mods can be freely added and removed.
+
+Raiders are encouraged to try different combinations of mods on their favorite weapons in the [[Practice Range]].
+
+== Classes ==
+=== Assault Rifles ===
+{| class="wikitable sortable"
+! <center>Name</center> !! Ammo Type !! Firing Mode !! Damage
+! Fire Rate !! Range !! Mod Slots
+|-
+| {{ILink|Kettle||160|Kettle IV}}
+| {{Icon|Ammo Light}} Light Ammo || Semi-Automatic || 8.5 || 30 || 42.8
+| {{Unbulleted list 
+|   {{Icon|Mods Muzzle}} Muzzle
+|   {{Icon|Mods Underbarrel}} Underbarrel
+|   {{Icon|Mods Light-Mag}} Light Magazine
+|   {{Icon|Mods Stock}} Stock
+  }}
+|-
+| {{ILink|Rattler||160|Rattler IV}}
+| {{Icon|Ammo Medium}} Medium Ammo || Fully-Automatic || 9 || 33.3 || 56.2
+| {{Unbulleted list
+|   {{Icon|Mods Muzzle}} Muzzle
+|   {{Icon|Mods Underbarrel}} Underbarrel
+|   {{Icon|Mods Stock}} Stock
+  }}
+|-
+| {{ILink|Arpeggio||160|Arpeggio IV}}
+| {{Icon|Ammo Medium}} Medium Ammo || 3-Round Burst || 9.5 || 18.3 || 55.9
+| {{Unbulleted list
+|   {{Icon|Mods Muzzle}} Muzzle
+|   {{Icon|Mods Underbarrel}} Underbarrel
+|   {{Icon|Mods Medium-Mag}} Medium Magazine
+|   {{Icon|Mods Stock}} Stock
+  }}
+|-
+| {{ILink|Tempest||160|Tempest IV}}
+| {{Icon|Ammo Medium}} Medium Ammo || Fully-Automatic || 10 || 36.7 || 55.9
+| {{Unbulleted list
+|   {{Icon|Mods Muzzle}} Muzzle
+|   {{Icon|Mods Underbarrel}} Underbarrel
+|   {{Icon|Mods Medium-Mag}} Medium Magazine
+  }}
+|-
+| {{ILink|Bettina||160|Bettina IV}}
+| {{Icon|Ammo Heavy}} Heavy Ammo || Fully-Automatic || 16 || 28.7 || 52.3
+| {{Unbulleted list
+|   {{Icon|Mods Muzzle}} Muzzle
+|   {{Icon|Mods Underbarrel}} Underbarrel
+|   {{Icon|Mods Stock}} Stock
+  }}
+|-
+|}
+
+=== Battle Rifles ===
+{| class="wikitable sortable"
+! <center>Name</center> !! Ammo Type !! Firing Mode !! Damage
+! Fire Rate !! Range !! Mod Slots
+|-
+| {{ILink|Ferro||160|Ferro IV}}
+| {{Icon|Ammo Heavy}} Heavy Ammo || Break-Action || 40 || 6.6 || 53.1
+| {{Unbulleted list
+|   {{Icon|Mods Muzzle}} Muzzle
+|   {{Icon|Mods Underbarrel}} Underbarrel
+|   {{Icon|Mods Stock}} Stock
+  }}
+|-
+| {{ILink|Renegade||160|Renegade IV}}
+| {{Icon|Ammo Medium}} Medium Ammo || Lever-Action || 35 || 21 || 68.8
+| {{Unbulleted list
+|   {{Icon|Mods Muzzle}} Muzzle
+|   {{Icon|Mods Medium-Mag}} Medium Magazine
+|   {{Icon|Mods Stock}} Stock
+  }}
+|-
+| {{ILink|Aphelion||160|Aphelion}} <ref name="Aphelion"/>
+| {{Icon|Ammo Energy}} Energy Clip || 2-Round Burst || 25 || 9 || 76
+| {{Unbulleted list
+|   {{Icon|Mods Underbarrel}} Underbarrel
+|   {{Icon|Mods Stock}} Stock
+  }}
+|-
+|}
+
+=== SMGs ===
+{| class="wikitable sortable"
+! <center>Name</center> !! Ammo Type !! Firing Mode !! Damage
+! Fire Rate !! Range !! Mod Slots
+|-
+| {{ILink|Stitcher||160|Stitcher IV}}
+| {{Icon|Ammo Light}} Light Ammo || Fully-Automatic || 6.5 || 45.3 || 42.1
+| {{Unbulleted list
+|   {{Icon|Mods Muzzle}} Muzzle
+|   {{Icon|Mods Underbarrel}} Underbarrel
+|   {{Icon|Mods Light-Mag}} Light Magazine
+|   {{Icon|Mods Stock}} Stock
+  }}
+|-
+| {{ILink|Canto||160|Canto IV}}
+| {{Icon|Ammo Medium}} Medium Ammo || Fully-Automatic || 6.5 || 56.7 || 51
+| {{Unbulleted list
+|   {{Icon|Mods Muzzle}} Muzzle
+|   {{Icon|Mods Underbarrel}} Underbarrel
+|   {{Icon|Mods Light-Mag}} Light Magazine
+|   {{Icon|Mods Stock}} Stock
+  }}
+|-
+| {{ILink|Bobcat||160|Bobcat IV}}
+| {{Icon|Ammo Light}} Light Ammo || Fully-Automatic || 6 || 66.7 || 44
+| {{Unbulleted list
+|   {{Icon|Mods Muzzle}} Muzzle
+|   {{Icon|Mods Underbarrel}} Underbarrel
+|   {{Icon|Mods Light-Mag}} Light Magazine
+|   {{Icon|Mods Stock}} Stock
+  }}
+|-
+|}
+
+=== Shotguns ===
+{| class="wikitable sortable"
+! <center>Name</center>!! Ammo Type !! Firing Mode !! Damage
+! Fire Rate !! Range !! Mod Slots
+|-
+| {{ILink|Il Toro||160|Il Toro IV}}
+| {{Icon|Ammo Shotgun}} Shotgun Ammo || Pump-Action || 67.5 || 14 || 20
+| {{Unbulleted list
+|   {{Icon|Mods Shotgun-Muzzle}} Shotgun Muzzle
+|   {{Icon|Mods Underbarrel}} Underbarrel
+|   {{Icon|Mods Shotgun-Mag}} Shotgun Magazine
+|   {{Icon|Mods Stock}} Stock
+  }}
+|-
+| {{ILink|Vulcano||160|Vulcano IV}}
+| {{Icon|Ammo Shotgun}} Shotgun Ammo || Semi-Automatic || 49.5 || 26.3 || 26
+| {{Unbulleted list
+|   {{Icon|Mods Shotgun-Muzzle}} Shotgun Muzzle
+|   {{Icon|Mods Underbarrel}} Underbarrel
+|   {{Icon|Mods Shotgun-Mag}} Shotgun Magazine
+|   {{Icon|Mods Stock}} Stock
+  }}
+|-
+| {{ILink|Dolabra||160|Dolabra}}
+| {{Icon|Ammo Energy}} Energy Clip || Semi-Automatic ||50 / 40 || ? || ?
+| N/A
+|}
+
+=== Pistols ===
+{| class="wikitable sortable"
+! <center>Name</center> !! Ammo Type !! Firing Mode !! Damage
+! Fire Rate !! Range !! Mod Slots
+|-
+| {{ILink|Hairpin||160|Hairpin IV}}
+| {{Icon|Ammo Light}} Light Ammo || Slide-Action || 20 || 9 || 38.6
+| {{Unbulleted list
+|   {{Icon|Mods Light-Mag}} Light Magazine
+  }}
+|-
+| {{ILink|Burletta||160|Burletta IV}}
+| {{Icon|Ammo Light}} Light Ammo || Semi-Automatic || 10 || 28 || 41.7
+| {{Unbulleted list
+|   {{Icon|Mods Muzzle}} Muzzle
+|   {{Icon|Mods Light-Mag}} Light Magazine
+  }}
+|-
+| {{ILink|Venator||160|Venator IV}}
+| {{Icon|Ammo Medium}} Medium Ammo || Semi-Automatic || 16 || 36.7 || 48.4
+| {{Unbulleted list
+|   {{Icon|Mods Underbarrel}} Underbarrel
+|   {{Icon|Mods Medium-Mag}} Medium Magazine
+  }}
+|}
+
+=== Hand Cannons ===
+{| class="wikitable sortable"
+! <center>Name</center> !! Ammo Type !! Firing Mode !! Damage
+! Fire Rate !! Range !! Mod Slots
+|-
+| {{ILink|Anvil||160|Anvil IV}}
+| {{Icon|Ammo Heavy}} Heavy Ammo || Single-Action || 40 || 16.3 || 50.2
+| {{Unbulleted list
+|   {{Icon|Mods Muzzle}} Muzzle
+|   {{Icon|Mods Tech-Mod}} Tech Mod
+  }}
+|-
+|}
+
+=== LMGs ===
+{| class="wikitable sortable"
+! <center>Name</center> !! Ammo Type !! Firing Mode !! Damage
+! Fire Rate !! Range !! Mod Slots
+|-
+| {{ILink|Torrente||160|Torrente IV}}
+| {{Icon|Ammo Medium}} Medium Ammo || Fully-Automatic || 8 || 58.3 || 49.9
+| {{Unbulleted list
+|   {{Icon|Mods Muzzle}} Muzzle
+|   {{Icon|Mods Medium-Mag}} Medium Magazine
+|   {{Icon|Mods Stock}} Stock
+  }}
+|}
+
+=== Sniper Rifles ===
+{| class="wikitable sortable"
+! <center>Name</center> !! Ammo Type !! Firing Mode !! Damage
+! Fire Rate !! Range !! Mod Slots
+|-
+| {{ILink|Osprey||160|Osprey IV}}
+| {{Icon|Ammo Medium}} Medium Ammo || Bolt-Action || 45 || 17.7 || 80.3
+| {{Unbulleted list
+|   {{Icon|Mods Muzzle}} Muzzle
+|   {{Icon|Mods Underbarrel}} Underbarrel
+|   {{Icon|Mods Medium-Mag}} Medium Magazine
+|   {{Icon|Mods Stock}} Stock
+  }}
+|-
+| {{ILink|Jupiter||160|Jupiter}}
+| {{Icon|Ammo Energy}} Energy Clip || Bolt-Action || 60 || 7.7 || 71.7
+| N/A
+|}
+
+=== Specials ===
+{| class="wikitable sortable"
+! <center>Name</center> !! Ammo Type !! Firing Mode !! Damage
+! Fire Rate !! Range !! Mod Slots
+|-
+| {{ILink|Rascal||160|Rascal II}}
+| {{Icon|Ammo Launcher}} Launcher Ammo || Break-Action || 75 || 13.7 || 28.3
+| N/A
+|-
+| {{ILink|Hullcracker||160|Hullcracker IV}}
+| {{Icon|Ammo Launcher}} Launcher Ammo || Pump-Action || 100 || 20.3 || 38.9
+| {{Unbulleted list
+|   {{Icon|Mods Underbarrel}} Underbarrel
+|   {{Icon|Mods Stock}} Stock
+  }}
+|-
+| {{ILink|Equalizer||160|Equalizer}}
+| {{Icon|Ammo Energy}} Energy Clip || Fully-Automatic || 8 || 33.3 || 68.6
+| N/A
+|}
+
+== References ==
+<references>
+<ref name="Aphelion">
+As the Aphelion cannot be upgraded, exact numerical stats are missing. As such, values show are a close estimation based on bar size.
+</ref>
+</references>

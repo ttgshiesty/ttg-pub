@@ -1,0 +1,87 @@
+		{inventory: {items: [,…], unmappedCount: 0, totalItems: 287, maxSlots: 292,…},…}
+		 inventory :  {items: [,…], unmappedCount: 0, totalItems: 287, maxSlots: 292,…} 
+		  currencies :  {credits: 2235036, cred: 739, raiderTokens: 200, xp: 8201796} 
+		 cred :  739   credits :  2235036   raiderTokens :  200   xp :  8201796 
+		 items :  [,…] 
+		[0 … 99] [100 … 199] [200 … 286]
+		 lastSyncedAt :  "2026-05-07T20:23:17.270Z"   maxSlots :  292   totalItems :  287   totalValue :  5299817   unmappedCount :  0 
+		 loadout :  {augment: null, shield: null, weapon1: null, weapon2: null, backpack: [], quickItems: [],…} 
+		 augment :  null   augmentedSlots :  []   backpack :  []   quickItems :  []   safePocket :  []   shield :  null   slotCounts :  {backpack: 10, quickItems: 4, safePocket: 1, augmentedSlots: 0} 
+		 augmentedSlots :  0   backpack :  10   quickItems :  4   safePocket :  1 
+		 weapon1 :  null   weapon2 :  null 
+
+I'm focused on the sync variables and the handshake process you're trying to capture. Based on the logs and the code you've pulled, here is the exact breakdown of the variables and where the sync process "lands" when you hit that button.
+
+1. The Key Variables (The Payloads)
+When the sync triggers, the logic is bundling these specific variables to send to your D1 database:
+
+arcTracker_inventoryData_v3: This is the heavy lifter. It contains the instanceId, publicUuid, and itemId (e.g., renegade_iv).
+
+playerLevel: Currently returning as 1 in your logs.
+
+serverTimestamp: This is the sync anchor. If this doesn't match the lastKnown value in your local state, the "Data changed" log triggers.
+
+blueprintStatuses: A boolean map (the true/false list you saw) that the sync uses to determine which weapon icons to render on the front end.
+
+2. The Sync Process (Step-by-Step)
+When you hit the button, the logic follows this path through the .js chunks:
+
+Event Capture: The nk(e) function in the React core identifies the button click and pulls the current state from localStorage.
+
+Comparison: The PollingSync logic compares your local serverTimestamp (e.g., 1777950337882) against the D1 server.
+
+The Fetch: If they don't match, [UserDataStore] initiates a GET or POST request to your API endpoint.
+
+The Return (The "Logic Go"): * The data is returned from the server as a JSON object.
+
+The UserDataSync function catches this "return" and runs localStorage.setItem().
+
+This is where the variables live: You can intercept them right here by searching the code for the string D1 data found.
+
+3. How to Capture the "Returns" in Real-Time
+To see the variables exactly when the sync finishes, use this Expression in the Console:
+
+JavaScript
+monitorEvents(window, 'storage');
+What this does: Every time the sync process updates your localStorage (which your logs show it's doing constantly), the Console will print the Key, the Old Value, and the New Value.
+
+Why it helps: You don't have to hunt through minified code—the variables will literally pop up in the console the millisecond the sync completes.
+
+If you want to see the specific function return that handles the weapon data, look for the async function in 4561-176b91c35535de39.js that contains the word fetch. The variable immediately following await is your data return.
+
+
+
+
+MapEventsData] Scheduling refresh in 3234s
+4561-176b91c35535de39.js:1 [MapEventsData] Scheduling refresh in 3234s
+4561-176b91c35535de39.js:1 [MapEventsData] Scheduling refresh in 3234s
+4561-176b91c35535de39.js:1 [MapEventsData] Scheduling refresh in 3233s
+4561-176b91c35535de39.js:1 [MapEventsData] Scheduling refresh in 3232s
+4561-176b91c35535de39.js:1 [UserDataStore] Fetching data from D1...
+4561-176b91c35535de39.js:1 [MapEventsData] Scheduling refresh in 3232s
+4561-176b91c35535de39.js:1 [PollingSync] Data changed, syncing from D1... {serverTimestamp: 1778187248082, lastKnown: 0}
+4561-176b91c35535de39.js:1 [UserDataStore] Fetching data from D1...
+4561-176b91c35535de39.js:1 [MapEventsData] Scheduling refresh in 3229s
+4561-176b91c35535de39.js:1 [UserDataStore] D1 data found - loading to localStorage {playerLevel: 1}
+4561-176b91c35535de39.js:1 [UserDataStore] D1 data found - loading to localStorage {playerLevel: 1}
+4561-176b91c35535de39.js:1 [UserDataSync] Data loaded from D1 to localStorage
+4561-176b91c35535de39.js:1 [PollingSync] Sync complete
+fetch('/api/embark/stats/summary')
+  .then(res => res.json())
+  .then(stats => {
+    console.log("SHiESTY_STAT_RETURN:", stats);
+    // This gives you the clean variables for your portal
+  });
+Promise {<pending>}
+VM30985:4 SHiESTY_STAT_RETURN: {totalRounds: 1614, totalExtracted: 943, totalDied: 671, totalTimeMs: 1271461285, totalValueExtracted: 93702243, …}totalArcKills: 5791totalContainersLooted: 20151totalDamage: 919190totalDied: 671totalExtracted: 943totalNetValue: 26532150totalPlayerKills: 131totalRounds: 1614totalTimeMs: 1271461285totalValueBroughtIn: 67170093totalValueExtracted: 93702243[[Prototype]]: Objectconstructor: ƒ Object()hasOwnProperty: ƒ hasOwnProperty()isPrototypeOf: ƒ isPrototypeOf()propertyIsEnumerable: ƒ propertyIsEnumerable()toLocaleString: ƒ toLocaleString()toString: ƒ toString()valueOf: ƒ valueOf()__defineGetter__: ƒ __defineGetter__()__defineSetter__: ƒ __defineSetter__()__lookupGetter__: ƒ __lookupGetter__()__lookupSetter__: ƒ __lookupSetter__()__proto__: (...)get __proto__: ƒ __proto__()set __proto__: ƒ __proto__()
+console.dir(window.__NEXT_DATA__.props.pageProps);
+VM30992:1 Uncaught TypeError: Cannot read properties of undefined (reading 'props')
+    at <anonymous>:1:34
+(anonymous) @ VM30992:1Understand this error
+const stats = await fetch('https://arctracker.io/api/embark/stats/summary').then(res => res.json());
+console.log("NET_VALUE_VAR:", stats.totalNetValue);
+console.log("PVP_KILLS_VAR:", stats.totalPlayerKills);
+VM30996:2 NET_VALUE_VAR: 26532150
+VM30996:3 PVP_KILLS_VAR: 131
+undefined
+
