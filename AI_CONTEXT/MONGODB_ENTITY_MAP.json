@@ -1,0 +1,1015 @@
+{
+  "version": 2,
+  "description": "MongoDB and SyncData entity contract for TTG / SHiESTY ARC Raiders. This is a project map for what each category should be stored/read as; it does not change Mongo schemas by itself.",
+  "rules": {
+    "embarkAuthority": "The browser extension is the only component that should call Embark. Server routes read MongoDB SyncData snapshots and may call ArcTracker/MetaForge only as non-Embark providers.",
+    "tokenRequirement": "A valid extension token is mandatory for full project functionality and must require re-auth after 24 hours.",
+    "idPriority": [
+      "publicUuid for owned inventory instances",
+      "itemId for canonical item identity",
+      "gameAssetId / weaponAssetId / targetId for Embark and ArcTracker mapping",
+      "slug/name only as display fallback"
+    ],
+    "progressRule": "The app should derive season and expedition state from gameProgress.projectPhaseStatuses keys such as expedition_project_s1_4. Do not require top-level seasonNumber or expeditionNumber."
+  },
+  "mongoCollections": {
+    "users": {
+      "model": "server/models/user.js",
+      "entities": [
+        "User",
+        "UserSettings",
+        "MapProgress",
+        "WantedItem",
+        "RaidHistory",
+        "XpHistory",
+        "Badge",
+        "PublicProfile"
+      ]
+    },
+    "syncdatas": {
+      "model": "server/models/syncdata.js",
+      "entities": [
+        "SyncSnapshot",
+        "ProfileSnapshot",
+        "SummarySnapshot",
+        "InventorySnapshot",
+        "StashSnapshot",
+        "LoadoutSnapshot",
+        "HideoutProgress",
+        "QuestProgress",
+        "ProjectProgress",
+        "BlueprintProgress",
+        "RaidRound",
+        "CombatStats",
+        "EnemyPerformance",
+        "WeaponPerformance",
+        "MapPerformance",
+        "GameProgress",
+        "ExpeditionStatus"
+      ]
+    },
+    "capturedtokens": {
+      "model": "server/models/capturedtoken.js",
+      "entities": ["AuthToken"]
+    },
+    "autosyncsettings": {
+      "model": "server/models/autosyncsettings.js",
+      "entities": ["AutoSyncSettings"]
+    },
+    "marketplacelistings": {
+      "model": "server/models/marketplacelisting.js",
+      "entities": ["MarketplaceListing"]
+    },
+    "marketplaceoffers": {
+      "model": "server/models/marketplaceoffer.js",
+      "entities": ["MarketplaceOffer"]
+    },
+    "marketplacepricesnapshots": {
+      "model": "server/models/marketplacepricesnapshot.js",
+      "entities": ["MarketplacePriceSnapshot"]
+    },
+    "notifications": {
+      "model": "server/models/notification.js",
+      "entities": ["Notification"]
+    },
+    "blueprintfinds": {
+      "model": "server/models/blueprintfind.js",
+      "entities": ["BlueprintFind"]
+    }
+  },
+  "syncDataSources": {
+    "extension_full": {
+      "description": "Raw full payload posted by SHiESTY Buddy",
+      "entities": [
+        "ProfileSnapshot",
+        "InventorySnapshot",
+        "LoadoutSnapshot",
+        "GameProgress",
+        "RaidRound",
+        "CombatStats"
+      ]
+    },
+    "shiestybuddy_v2": {
+      "description": "Legacy full extension payload source",
+      "entities": ["SyncSnapshot"]
+    },
+    "extension_profile": { "entities": ["ProfileSnapshot"] },
+    "extension_stash": { "entities": ["StashSnapshot", "InventoryItem"] },
+    "extension_inventory": {
+      "entities": ["InventorySnapshot", "InventoryItem"]
+    },
+    "extension_inventoryLatest": {
+      "entities": [
+        "InventorySnapshot",
+        "StashSnapshot",
+        "LoadoutSnapshot",
+        "InventoryItem"
+      ],
+      "shape": "Normalized from ArcTracker compact snapshot fields p/i/q/s/d/a into publicUuid/itemId/quantity/slotIndex/durabilityPercent/attachments."
+    },
+    "extension_loadout": {
+      "entities": ["LoadoutSnapshot", "LoadoutSlot", "Attachment"]
+    },
+    "extension_hideout": { "entities": ["HideoutProgress"] },
+    "extension_quests": { "entities": ["QuestProgress"] },
+    "extension_projects": { "entities": ["ProjectProgress"] },
+    "extension_blueprints": { "entities": ["BlueprintProgress"] },
+    "extension_rounds": { "entities": ["RaidRound"] },
+    "extension_stats": {
+      "entities": [
+        "CombatStats",
+        "EnemyPerformance",
+        "WeaponPerformance",
+        "MapPerformance"
+      ]
+    },
+    "extension_progress": {
+      "entities": [
+        "GameProgress",
+        "QuestProgress",
+        "ProjectProgress",
+        "BlueprintProgress",
+        "HideoutProgress",
+        "ExpeditionStatus"
+      ]
+    },
+    "extension_expeditionStatus": { "entities": ["ExpeditionStatus"] },
+    "arctracker_profile": { "entities": ["ProfileSnapshot"] },
+    "arctracker_stash": { "entities": ["StashSnapshot", "InventoryItem"] },
+    "arctracker_loadout": { "entities": ["LoadoutSnapshot", "LoadoutSlot"] },
+    "arctracker_hideout": { "entities": ["HideoutProgress"] },
+    "arctracker_quests": { "entities": ["QuestProgress"] },
+    "arctracker_projects": { "entities": ["ProjectProgress"] },
+    "arctracker_blueprints": { "entities": ["BlueprintProgress"] },
+    "arctracker_rounds": { "entities": ["RaidRound"] },
+    "arctracker_stats": { "entities": ["CombatStats"] },
+    "arctracker_summary": { "entities": ["SummarySnapshot", "CombatStats"] },
+    "arctracker_enemyKills": { "entities": ["EnemyPerformance"] },
+    "arctracker_weaponKills": { "entities": ["WeaponPerformance"] },
+    "arctracker_mapPerformance": { "entities": ["MapPerformance"] },
+    "xbox_bridge": { "entities": ["SyncSnapshot"] }
+  },
+  "staticSources": {
+    "game_asset_dump.json": {
+      "entities": ["GameAssetMapping", "InventoryInstanceSeed"],
+      "notes": "Maps DA_* asset names and numeric asset ids to gameAssetId values. The project resolver supports a dump root and { values: { [itemId]: number } }."
+    },
+    "client/data/metaforge-items.json": {
+      "entities": ["ItemCatalog"],
+      "notes": "Rich MetaForge item data: id, name, icon, rarity, value, workbench, loadout_slots, stat_block, guide links."
+    },
+    "server/data/ardb-items.json": {
+      "entities": ["ItemCatalog"],
+      "notes": "ARDB local item catalog. First-class enrichment for localized names/descriptions, item type, rarity, value, weightKg, stackSize, recycling/salvage/repair, vendors, effects, recipes, and assets."
+    },
+    "server/data/ardb-item-tags.json": {
+      "entities": ["ItemTag"],
+      "notes": "ARDB-derived keep/sell/recycle tagging used by item enrichment and stash decisions."
+    },
+    "server/data/ardb-projects.json": {
+      "entities": ["ProjectDefinition"],
+      "notes": "ARDB local project phase and requirement data."
+    },
+    "server/data/ardb-arc-enemies.json": {
+      "entities": ["EnemyDefinition"],
+      "notes": "Optional ARDB local ARC enemy catalog from /arc-enemies. If absent, server falls back to client/src/data/bots.json until the ARDB file is provided."
+    },
+    "server/data/ardb-enemies.json": {
+      "entities": ["EnemyDefinition"],
+      "notes": "Accepted alternate filename for the ARDB /arc-enemies local dump."
+    },
+    "client/src/data/items-master.json": {
+      "entities": ["ItemCatalog"],
+      "notes": "Legacy flattened item catalog. It should be overlaid with MetaForge rich data, not treated as the only source."
+    },
+    "client/src/data/items/*.json": { "entities": ["ItemCatalog"] },
+    "client/src/data/quest/*.json": { "entities": ["QuestDefinition"] },
+    "client/src/data/quests-all.json": { "entities": ["QuestDefinition"] },
+    "client/src/data/projects.json": { "entities": ["ProjectDefinition"] },
+    "client/src/data/projects-metaforge.json": { "entities": ["ProjectDefinition"] },
+    "client/src/data/hideout/*.json": { "entities": ["HideoutModuleDefinition"] },
+    "client/src/data/workshop_upgrades.json": { "entities": ["WorkshopUpgradeDefinition"] },
+    "client/src/data/bots.json": {
+      "entities": ["EnemyDefinition"],
+      "notes": "Current fallback ARC enemy/bot catalog. Replace or overlay with ARDB /arc-enemies data when provided."
+    },
+    "client/src/data/maps.json": { "entities": ["MapDefinition"] },
+    "client/src/data/pois/*.ts": { "entities": ["PoiMarker", "ContainerMarker", "LocationType"] },
+    "client/src/data/map-events/map-events.json": { "entities": ["MapEventDefinition"] },
+    "client/src/data/blueprintheatmappoints.ts": { "entities": ["BlueprintHeatmapPoint"] },
+    "client/src/data/blueprintcoordinatesource.ts": { "entities": ["BlueprintCoordinate"] },
+    "client/src/data/item-tags-computed.json": { "entities": ["ItemTag"] },
+    "client/src/data/item-tag-reasons.json": { "entities": ["ItemTagReason"] },
+    "client/src/data/trades.json": { "entities": ["TradeDefinition"] },
+    "client/src/data/metaforge/metaforgeweeklytrials.ts": { "entities": ["TrialDefinition"] },
+    "client/src/data/metaforge/trialsdata.ts": { "entities": ["TrialDefinition", "TrialLeaderboard"] },
+    "client/src/skill-tree/data/skillsGraph.ts": { "entities": ["SkillNode", "SkillTreeProgress"] }
+  },
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "Discord account and SHiESTY profile root",
+      "properties": {
+        "discordId": { "type": "string", "sourceField": "id" },
+        "username": { "type": "string" },
+        "avatar": { "type": "string" },
+        "displayName": { "type": "string" },
+        "embarkId": { "type": "string" },
+        "embarkLinked": { "type": "boolean" },
+        "metaForgeProfileId": { "type": "string" },
+        "arcTrackerUserKey": { "type": "string", "private": true },
+        "arcTrackerTradeKey": { "type": "string", "private": true },
+        "credits": { "type": "number" },
+        "tokens": { "type": "number" },
+        "stashValue": { "type": "number" },
+        "playerLevel": { "type": "number" },
+        "gameXp": { "type": "number" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "lastActive": { "type": "string", "format": "date-time" }
+      },
+      "required": ["discordId"]
+    },
+    "AuthToken": {
+      "title": "AuthToken",
+      "description": "Hashed extension token metadata. Full token is stored by current model but should not be exposed to clients.",
+      "properties": {
+        "userId": { "type": "string" },
+        "tokenHash": { "type": "string" },
+        "source": { "type": "string" },
+        "isValid": { "type": "boolean" },
+        "capturedAt": { "type": "string", "format": "date-time" },
+        "lastUsed": { "type": "string", "format": "date-time" },
+        "linkedAt": { "type": "string", "format": "date-time" },
+        "expiresAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "tokenHash", "isValid", "capturedAt", "expiresAt"]
+    },
+    "AutoSyncSettings": {
+      "title": "AutoSyncSettings",
+      "properties": {
+        "userId": { "type": "string" },
+        "enabled": { "type": "boolean" },
+        "intervalMinutes": { "type": "number" },
+        "source": {
+          "type": "string",
+          "enum": ["extension", "arctracker", "both"]
+        },
+        "lastSyncedAt": { "type": "string", "format": "date-time" },
+        "nextSyncAt": { "type": "string", "format": "date-time" },
+        "consecutiveFailures": { "type": "number" },
+        "lastErrorMessage": { "type": "string" }
+      },
+      "required": ["userId", "enabled", "intervalMinutes", "source"]
+    },
+    "SyncSnapshot": {
+      "title": "SyncSnapshot",
+      "properties": {
+        "userId": { "type": "string" },
+        "source": { "type": "string" },
+        "payload": { "type": "object" },
+        "syncedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "source", "payload", "syncedAt"]
+    },
+    "ProfileSnapshot": {
+      "title": "ProfileSnapshot",
+      "properties": {
+        "userId": { "type": "string" },
+        "embarkId": { "type": "string" },
+        "username": { "type": "string" },
+        "displayName": { "type": "string" },
+        "playerLevel": { "type": "number" },
+        "xp": { "type": "number" },
+        "syncedAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "SummarySnapshot": {
+      "title": "SummarySnapshot",
+      "properties": {
+        "totalRounds": { "type": "number" },
+        "totalExtracted": { "type": "number" },
+        "totalDied": { "type": "number" },
+        "totalNetValue": { "type": "number" },
+        "totalValueExtracted": { "type": "number" },
+        "totalArcKills": { "type": "number" },
+        "totalPlayerKills": { "type": "number" },
+        "totalDamage": { "type": "number" },
+        "totalScore": { "type": "number" }
+      }
+    },
+    "InventorySnapshot": {
+      "title": "InventorySnapshot",
+      "description": "Latest inventory/stash snapshot. Supports ArcTracker compact item format.",
+      "properties": {
+        "userId": { "type": "string" },
+        "items": {
+          "type": "array",
+          "items": { "$ref": "#/entities/InventoryItem" }
+        },
+        "loadout": { "$ref": "#/entities/LoadoutSnapshot" },
+        "usedSlots": { "type": "number" },
+        "maxSlots": { "type": "number" },
+        "currencies": { "type": "object" },
+        "credits": { "type": "number" },
+        "cred": { "type": "number" },
+        "raiderTokens": { "type": "number" },
+        "xp": { "type": "number" },
+        "totalValue": { "type": "number" },
+        "syncedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["items", "syncedAt"]
+    },
+    "StashSnapshot": {
+      "title": "StashSnapshot",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": { "$ref": "#/entities/InventoryItem" }
+        },
+        "totalItems": { "type": "number" },
+        "maxSlots": { "type": "number" },
+        "unmappedCount": { "type": "number" },
+        "lastSyncedAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "InventoryItem": {
+      "title": "InventoryItem",
+      "description": "Owned inventory item, stash item, loadout slot item, or attachment.",
+      "compactFields": {
+        "p": "publicUuid",
+        "i": "itemId",
+        "q": "quantity",
+        "s": "slotIndex",
+        "d": "durabilityPercent",
+        "a": "attachments"
+      },
+      "properties": {
+        "instanceId": { "type": "string" },
+        "publicUuid": { "type": "string" },
+        "itemId": { "type": "string" },
+        "gameAssetId": { "type": "number" },
+        "baseGameAssetId": { "type": "number" },
+        "quantity": { "type": "number" },
+        "slotIndex": { "type": "number" },
+        "durabilityPercent": { "type": "number" },
+        "name": { "type": "string" },
+        "icon": { "type": "string" },
+        "rarity": { "type": "string" },
+        "item_type": { "type": "string" },
+        "loadout_slots": { "type": "array" },
+        "stat_block": { "type": "object" },
+        "attachments": {
+          "type": "array",
+          "items": { "$ref": "#/entities/InventoryItem" }
+        },
+        "hasUserOverride": { "type": "boolean" },
+        "isBlankMapping": { "type": "boolean" }
+      },
+      "required": ["itemId"]
+    },
+    "LoadoutSnapshot": {
+      "title": "LoadoutSnapshot",
+      "properties": {
+        "weapon1": { "$ref": "#/entities/InventoryItem" },
+        "weapon2": { "$ref": "#/entities/InventoryItem" },
+        "weapon_1": { "$ref": "#/entities/InventoryItem" },
+        "weapon_2": { "$ref": "#/entities/InventoryItem" },
+        "augment": { "$ref": "#/entities/InventoryItem" },
+        "shield": { "$ref": "#/entities/InventoryItem" },
+        "backpack": {
+          "type": "array",
+          "items": { "$ref": "#/entities/InventoryItem" }
+        },
+        "quickItems": {
+          "type": "array",
+          "items": { "$ref": "#/entities/InventoryItem" }
+        },
+        "quick_use": {
+          "type": "array",
+          "items": { "$ref": "#/entities/InventoryItem" }
+        },
+        "safePocket": {
+          "type": "array",
+          "items": { "$ref": "#/entities/InventoryItem" }
+        },
+        "loadoutCost": { "type": "number" }
+      }
+    },
+    "LoadoutSlot": {
+      "title": "LoadoutSlot",
+      "properties": {
+        "slot": { "type": "string" },
+        "item": { "$ref": "#/entities/InventoryItem" }
+      }
+    },
+    "Attachment": {
+      "title": "Attachment",
+      "properties": {
+        "parentInstanceId": { "type": "string" },
+        "item": { "$ref": "#/entities/InventoryItem" }
+      }
+    },
+    "GameProgress": {
+      "title": "GameProgress",
+      "properties": {
+        "playerLevel": { "type": "number" },
+        "gameProgress": { "type": "object" },
+        "questStatuses": {
+          "type": "object",
+          "additionalProperties": { "type": "boolean" }
+        },
+        "neededItemCounts": {
+          "type": "object",
+          "additionalProperties": { "type": "number" }
+        },
+        "hideoutModuleLevels": {
+          "type": "object",
+          "additionalProperties": { "type": "number" }
+        },
+        "projectPhaseStatuses": {
+          "type": "object",
+          "additionalProperties": { "type": "boolean" }
+        },
+        "blueprintStatuses": {
+          "type": "object",
+          "additionalProperties": { "type": "boolean" }
+        },
+        "categoryGoalProgress": {
+          "type": "object",
+          "additionalProperties": { "type": "number" }
+        },
+        "allocatedSkillPoints": { "type": "object" },
+        "preferences": { "type": "object" },
+        "lastSynced": { "type": "string", "format": "date-time" },
+        "isSubscribed": { "type": "boolean" },
+        "exists": { "type": "boolean" }
+      },
+      "required": ["gameProgress"]
+    },
+    "ExpeditionStatus": {
+      "title": "ExpeditionStatus",
+      "description": "Derived from GameProgress.projectPhaseStatuses; top-level season/expedition numbers are optional.",
+      "properties": {
+        "activeSeason": { "type": ["number", "null"] },
+        "expeditionNumber": { "type": "number" },
+        "currentTier": { "type": "number" },
+        "completedExpeditions": { "type": "number" },
+        "totalExpeditions": { "type": "number" },
+        "state": { "type": "string", "enum": ["IN_PROGRESS", "READY"] },
+        "projectPhaseStatuses": { "type": "object" },
+        "phases": { "type": "array" },
+        "lastSynced": { "type": "string", "format": "date-time" }
+      }
+    },
+    "QuestProgress": {
+      "title": "QuestProgress",
+      "properties": {
+        "questId": { "type": "string" },
+        "completed": { "type": "boolean" },
+        "status": { "type": "string" },
+        "objectives": { "type": "array" },
+        "progress": { "type": "number" }
+      }
+    },
+    "ProjectProgress": {
+      "title": "ProjectProgress",
+      "properties": {
+        "projectId": { "type": "string" },
+        "isExpedition": { "type": "boolean" },
+        "expeditionNumber": { "type": "number" },
+        "phase": { "type": "number" },
+        "season": { "type": ["number", "null"] },
+        "completed": { "type": "boolean" },
+        "neededItemCounts": { "type": "object" },
+        "categoryGoalProgress": { "type": "object" }
+      }
+    },
+    "BlueprintProgress": {
+      "title": "BlueprintProgress",
+      "properties": {
+        "blueprintId": { "type": "string" },
+        "itemId": { "type": "string" },
+        "learned": { "type": "boolean" },
+        "unlocked": { "type": "boolean" }
+      }
+    },
+    "HideoutProgress": {
+      "title": "HideoutProgress",
+      "properties": {
+        "moduleId": { "type": "string" },
+        "level": { "type": "number" },
+        "hideoutModuleLevels": { "type": "object" }
+      }
+    },
+    "RaidRound": {
+      "title": "RaidRound",
+      "properties": {
+        "raidId": { "type": "string" },
+        "roundId": { "type": "string" },
+        "map": { "type": "string" },
+        "outcome": { "type": "string" },
+        "durationMs": { "type": "number" },
+        "valueExtracted": { "type": "number" },
+        "valueBroughtIn": { "type": "number" },
+        "netValue": { "type": "number" },
+        "damage": { "type": "number" },
+        "score": { "type": "number" },
+        "arcKills": { "type": "number" },
+        "playerKills": { "type": "number" },
+        "roundEndedAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "CombatStats": {
+      "title": "CombatStats",
+      "properties": {
+        "totalRaids": { "type": "number" },
+        "totalExtracted": { "type": "number" },
+        "totalDied": { "type": "number" },
+        "totalKills": { "type": "number" },
+        "totalArcKills": { "type": "number" },
+        "totalPlayerKills": { "type": "number" },
+        "totalDamage": { "type": "number" },
+        "totalNetValue": { "type": "number" },
+        "containersLooted": { "type": "number" },
+        "survivalRate": { "type": "number" },
+        "extractionRate": { "type": "number" }
+      }
+    },
+    "EnemyPerformance": {
+      "title": "EnemyPerformance",
+      "description": "ARC kill rows keyed by targetId before display name.",
+      "properties": {
+        "targetId": { "type": "number" },
+        "target_id": { "type": "number" },
+        "enemyId": { "type": "string" },
+        "name": { "type": "string" },
+        "count": { "type": "number" },
+        "kills": { "type": "number" },
+        "damage": { "type": "number" }
+      }
+    },
+    "WeaponPerformance": {
+      "title": "WeaponPerformance",
+      "description": "Weapon kill rows keyed by weaponAssetId before itemId/display name.",
+      "properties": {
+        "weaponAssetId": { "type": "number" },
+        "weapon_asset_id": { "type": "number" },
+        "itemId": { "type": "string" },
+        "item_id": { "type": "string" },
+        "name": { "type": "string" },
+        "count": { "type": "number" },
+        "kills": { "type": "number" },
+        "damage": { "type": "number" }
+      }
+    },
+    "MapPerformance": {
+      "title": "MapPerformance",
+      "properties": {
+        "mapTargetId": { "type": "number" },
+        "mapName": { "type": "string" },
+        "raids": { "type": "number" },
+        "extracted": { "type": "number" },
+        "totalDurationMs": { "type": "number" },
+        "totalNetValue": { "type": "number" }
+      }
+    },
+    "GameAssetMapping": {
+      "title": "GameAssetMapping",
+      "properties": {
+        "itemId": { "type": "string" },
+        "gameAssetId": { "type": "number" },
+        "baseGameAssetId": { "type": "number" },
+        "assetName": { "type": "string" },
+        "itemType": { "type": "string" },
+        "values": {
+          "type": "object",
+          "additionalProperties": { "type": "number" }
+        }
+      },
+      "required": ["itemId", "gameAssetId"]
+    },
+    "PublicUuidItemMapping": {
+      "title": "PublicUuidItemMapping",
+      "description": "Server-curated overrides for publicUuid to itemId when ArcTracker scraper guesses are blank or wrong.",
+      "properties": {
+        "publicUuid": { "type": "string" },
+        "itemId": { "type": "string" },
+        "gameAssetId": { "type": "number" },
+        "hasUserOverride": { "type": "boolean" },
+        "isBlankMapping": { "type": "boolean" }
+      }
+    },
+    "ItemCatalog": {
+      "title": "ItemCatalog",
+      "properties": {
+        "id": { "type": "string" },
+        "gameAssetId": { "type": "number" },
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "item_type": { "type": "string" },
+        "subcategory": { "type": "string" },
+        "loadout_slots": { "type": "array" },
+        "icon": { "type": "string" },
+        "rarity": { "type": "string" },
+        "value": { "type": "number" },
+        "workbench": { "type": ["string", "null"] },
+        "stat_block": { "type": "object" },
+        "guide_links": { "type": "array" }
+      },
+      "required": ["id", "name"]
+    },
+    "QuestDefinition": {
+      "title": "QuestDefinition",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "trader": { "type": "string" },
+        "objectives": { "type": "array" },
+        "rewards": { "type": "array" }
+      }
+    },
+    "ProjectDefinition": {
+      "title": "ProjectDefinition",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "phases": { "type": "array" },
+        "requiredItems": { "type": "array" }
+      }
+    },
+    "BlueprintDefinition": {
+      "title": "BlueprintDefinition",
+      "properties": {
+        "itemId": { "type": "string" },
+        "name": { "type": "string" },
+        "rarity": { "type": "string" },
+        "icon": { "type": "string" },
+        "locations": { "type": "array" },
+        "guide_links": { "type": "array" }
+      }
+    },
+    "HideoutModuleDefinition": {
+      "title": "HideoutModuleDefinition",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "levels": { "type": "array" },
+        "requiredItems": { "type": "array" }
+      }
+    },
+    "WorkshopUpgradeDefinition": {
+      "title": "WorkshopUpgradeDefinition",
+      "properties": {
+        "id": { "type": "string" },
+        "moduleId": { "type": "string" },
+        "level": { "type": "number" },
+        "cost": { "type": "array" }
+      }
+    },
+    "EnemyDefinition": {
+      "title": "EnemyDefinition",
+      "properties": {
+        "id": { "type": "string" },
+        "targetId": { "type": "number" },
+        "name": { "type": "string" },
+        "icon": { "type": "string" },
+        "category": { "type": "string" }
+      }
+    },
+    "MapDefinition": {
+      "title": "MapDefinition",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "slug": { "type": "string" },
+        "image": { "type": "string" }
+      }
+    },
+    "PoiMarker": {
+      "title": "PoiMarker",
+      "properties": {
+        "id": { "type": "string" },
+        "mapId": { "type": "string" },
+        "type": { "type": "string" },
+        "x": { "type": "number" },
+        "y": { "type": "number" },
+        "name": { "type": "string" }
+      }
+    },
+    "ContainerMarker": {
+      "title": "ContainerMarker",
+      "properties": {
+        "id": { "type": "string" },
+        "mapId": { "type": "string" },
+        "containerType": { "type": "string" },
+        "x": { "type": "number" },
+        "y": { "type": "number" }
+      }
+    },
+    "LocationType": {
+      "title": "LocationType",
+      "properties": {
+        "id": { "type": "string" },
+        "label": { "type": "string" },
+        "icon": { "type": "string" }
+      }
+    },
+    "MapEventDefinition": {
+      "title": "MapEventDefinition",
+      "properties": {
+        "id": { "type": "string" },
+        "displayName": { "type": "string" },
+        "icon": { "type": "string" },
+        "svgIcon": { "type": "string" },
+        "category": { "type": "string" },
+        "disabled": { "type": "boolean" },
+        "localizations": { "type": "object" }
+      }
+    },
+    "BlueprintHeatmapPoint": {
+      "title": "BlueprintHeatmapPoint",
+      "properties": {
+        "blueprintId": { "type": "string" },
+        "mapId": { "type": "string" },
+        "x": { "type": "number" },
+        "y": { "type": "number" },
+        "weight": { "type": "number" }
+      }
+    },
+    "BlueprintCoordinate": {
+      "title": "BlueprintCoordinate",
+      "properties": {
+        "blueprintId": { "type": "string" },
+        "mapId": { "type": "string" },
+        "locations": { "type": "array" }
+      }
+    },
+    "ItemTag": {
+      "title": "ItemTag",
+      "properties": {
+        "itemId": { "type": "string" },
+        "tag": { "type": "string" },
+        "score": { "type": "number" }
+      }
+    },
+    "ItemTagReason": {
+      "title": "ItemTagReason",
+      "properties": {
+        "itemId": { "type": "string" },
+        "reason": { "type": "string" }
+      }
+    },
+    "TradeDefinition": {
+      "title": "TradeDefinition",
+      "properties": {
+        "id": { "type": "string" },
+        "trader": { "type": "string" },
+        "gives": { "type": "array" },
+        "requires": { "type": "array" }
+      }
+    },
+    "TrialDefinition": {
+      "title": "TrialDefinition",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "startsAt": { "type": "string", "format": "date-time" },
+        "endsAt": { "type": "string", "format": "date-time" },
+        "objectives": { "type": "array" }
+      }
+    },
+    "TrialLeaderboard": {
+      "title": "TrialLeaderboard",
+      "properties": {
+        "trialId": { "type": "string" },
+        "userId": { "type": "string" },
+        "score": { "type": "number" },
+        "rank": { "type": "number" }
+      }
+    },
+    "SkillNode": {
+      "title": "SkillNode",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "tree": { "type": "string" },
+        "cost": { "type": "number" },
+        "prerequisites": { "type": "array" }
+      }
+    },
+    "SkillTreeProgress": {
+      "title": "SkillTreeProgress",
+      "properties": {
+        "userId": { "type": "string" },
+        "allocatedSkillPoints": { "type": "object" },
+        "unlockedNodes": { "type": "array" }
+      }
+    },
+    "UserSettings": {
+      "title": "UserSettings",
+      "properties": {
+        "xboxIp": { "type": "string" },
+        "autoSyncXbox": { "type": "boolean" },
+        "discordNotifications": { "type": "boolean" },
+        "marketplaceAlerts": { "type": "boolean" },
+        "dashboardLayout": { "type": "string" },
+        "theme": { "type": "string" }
+      }
+    },
+    "MapProgress": {
+      "title": "MapProgress",
+      "properties": {
+        "version": { "type": "number" },
+        "maps": { "type": "object" }
+      }
+    },
+    "WantedItem": {
+      "title": "WantedItem",
+      "properties": {
+        "itemId": { "type": "string" },
+        "itemName": { "type": "string" },
+        "reason": { "type": "string" },
+        "addedAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "RaidHistory": {
+      "title": "RaidHistory",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "content": { "type": "string" },
+        "category": { "type": "string" },
+        "metadata": { "type": "object" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "XpHistory": {
+      "title": "XpHistory",
+      "properties": {
+        "amount": { "type": "number" },
+        "reason": { "type": "string" },
+        "source": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "Badge": {
+      "title": "Badge",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "icon": { "type": "string" },
+        "earnedAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "PublicProfile": {
+      "title": "PublicProfile",
+      "properties": {
+        "slug": { "type": "string" },
+        "profilePublic": { "type": "boolean" },
+        "bio": { "type": "string" },
+        "storefrontName": { "type": "string" },
+        "marketplaceRep": { "type": "number" }
+      }
+    },
+    "MarketplaceListing": {
+      "title": "MarketplaceListing",
+      "properties": {
+        "sellerId": { "type": "string" },
+        "itemId": { "type": "string" },
+        "itemName": { "type": "string" },
+        "itemType": { "type": "string" },
+        "itemrarity": { "type": "string" },
+        "itemQuantity": { "type": "number" },
+        "price": { "type": "number" },
+        "currency": { "type": "string" },
+        "status": { "type": "string" },
+        "stashItemRef": { "type": "string" }
+      }
+    },
+    "MarketplaceOffer": {
+      "title": "MarketplaceOffer",
+      "properties": {
+        "listingId": { "type": "string" },
+        "sellerId": { "type": "string" },
+        "buyerId": { "type": "string" },
+        "itemName": { "type": "string" },
+        "offeredPrice": { "type": "number" },
+        "currency": { "type": "string" },
+        "status": { "type": "string" }
+      }
+    },
+    "MarketplacePriceSnapshot": {
+      "title": "MarketplacePriceSnapshot",
+      "properties": {
+        "itemId": { "type": "string" },
+        "price": { "type": "number" },
+        "quantity": { "type": "number" },
+        "event": { "type": "string" },
+        "listingId": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "Notification": {
+      "title": "Notification",
+      "properties": {
+        "userId": { "type": "string" },
+        "type": { "type": "string" },
+        "title": { "type": "string" },
+        "message": { "type": "string" },
+        "read": { "type": "boolean" },
+        "link": { "type": "string" },
+        "meta": { "type": "object" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "BlueprintFind": {
+      "title": "BlueprintFind",
+      "properties": {
+        "userId": { "type": "string" },
+        "blueprintId": { "type": "string" },
+        "blueprintName": { "type": "string" },
+        "map": { "type": "string" },
+        "condition": { "type": "string" },
+        "container": { "type": "string" },
+        "location": { "type": "string" },
+        "locked": { "type": "boolean" },
+        "source": { "type": "string" },
+        "votes": { "type": "object" }
+      }
+    }
+  },
+  "routeReads": {
+    "/api/player/me": ["ProfileSnapshot", "SummarySnapshot", "User"],
+    "/api/player/raider-hub": [
+      "ProfileSnapshot",
+      "SummarySnapshot",
+      "CombatStats",
+      "GameProgress"
+    ],
+    "/api/player/stash": [
+      "StashSnapshot",
+      "InventoryItem",
+      "ItemCatalog",
+      "GameAssetMapping"
+    ],
+    "/api/player/loadout": [
+      "LoadoutSnapshot",
+      "LoadoutSlot",
+      "InventoryItem",
+      "ItemCatalog"
+    ],
+    "/api/player/quests": ["QuestProgress", "QuestDefinition"],
+    "/api/player/projects": [
+      "ProjectProgress",
+      "ProjectDefinition",
+      "GameProgress"
+    ],
+    "/api/player/blueprints": [
+      "BlueprintProgress",
+      "BlueprintDefinition",
+      "ItemCatalog"
+    ],
+    "/api/player/hideout": [
+      "HideoutProgress",
+      "HideoutModuleDefinition",
+      "WorkshopUpgradeDefinition"
+    ],
+    "/api/player/rounds": ["RaidRound"],
+    "/api/player/stats": ["CombatStats", "SummarySnapshot"],
+    "/api/player/enemy-kills": ["EnemyPerformance", "EnemyDefinition"],
+    "/api/player/weapon-kills": [
+      "WeaponPerformance",
+      "ItemCatalog",
+      "GameAssetMapping"
+    ],
+    "/api/player/map-performance": ["MapPerformance", "MapDefinition"],
+    "/api/player/expedition-status": [
+      "ExpeditionStatus",
+      "GameProgress",
+      "ProjectProgress"
+    ],
+    "/api/extension/sync": [
+      "SyncSnapshot",
+      "InventorySnapshot",
+      "GameProgress",
+      "ExpeditionStatus"
+    ],
+    "/api/extension/status": ["AuthToken", "AutoSyncSettings"],
+    "/api/marketplace/*": [
+      "MarketplaceListing",
+      "MarketplaceOffer",
+      "MarketplacePriceSnapshot",
+      "Notification"
+    ],
+    "/api/map-progress/*": ["MapProgress", "PoiMarker", "MapDefinition"],
+    "/api/catalog/*": [
+      "ItemCatalog",
+      "QuestDefinition",
+      "ProjectDefinition",
+      "MapEventDefinition"
+    ],
+    "/api/arc-enemies": ["EnemyDefinition"],
+    "/api/arc-enemies/:id": ["EnemyDefinition"],
+    "/api/arctracker/*": ["SyncSnapshot"]
+  }
+}
